@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapStyle | AI Wardrobe Assistant</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #ffffff;
+            --accent-cyan: #00f2ff;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- 1. BACKGROUND STARS & TWINKLING --- */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -4;
+            background: #000 url(http://www.script-tutorials.com/demos/360/images/stars.png) repeat top center;
+            opacity: 0.6;
+        }
+
+        .twinkling {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background: transparent url(http://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
+            animation: move-twink-back 200s linear infinite;
+        }
+
+        @keyframes move-twink-back {
+            from {background-position:0 0;}
+            to {background-position:-10000px 5000px;}
+        }
+
+        /* --- 2. SHOOTING STARS --- */
+        .night {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotateZ(45deg);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .shooting_star {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            height: 2px;
+            background: linear-gradient(-45deg, rgba(95, 145, 255, 1), rgba(0, 0, 255, 0));
+            border-radius: 999px;
+            filter: drop-shadow(0 0 6px rgba(105, 155, 255, 1));
+            animation: tail 3000ms ease-in-out infinite, shooting 3000ms ease-in-out infinite;
+        }
+
+        .shooting_star::before,
+        .shooting_star::after {
+            content: '';
+            position: absolute;
+            top: calc(50% - 1px);
+            right: 0;
+            height: 2px;
+            background: linear-gradient(-45deg, rgba(0, 0, 255, 0), rgba(95, 145, 255, 1), rgba(0, 0, 255, 0));
+            transform: translateX(50%) rotateZ(45deg);
+            border-radius: 100%;
+            animation: shining 3000ms ease-in-out infinite;
+        }
+
+        .shooting_star::after {
+            transform: translateX(50%) rotateZ(-45deg);
+        }
+
+        /* Shooting Star Positioning & Delays */
+        .shooting_star:nth-child(1) { top: 10%; left: 15%; animation-delay: 1000ms; }
+        .shooting_star:nth-child(2) { top: 25%; left: 85%; animation-delay: 2000ms; }
+        .shooting_star:nth-child(3) { top: 75%; left: 5%; animation-delay: 500ms; }
+        .shooting_star:nth-child(4) { top: 5%; left: 60%; animation-delay: 3500ms; }
+        .shooting_star:nth-child(5) { top: 60%; left: 90%; animation-delay: 1500ms; }
+        .shooting_star:nth-child(6) { top: 40%; left: 10%; animation-delay: 2500ms; }
+        .shooting_star:nth-child(7) { top: 80%; left: 70%; animation-delay: 800ms; }
+        .shooting_star:nth-child(8) { top: 15%; left: 40%; animation-delay: 4000ms; }
+        .shooting_star:nth-child(9) { top: 65%; left: 30%; animation-delay: 1200ms; }
+        .shooting_star:nth-child(10) { top: 35%; left: 95%; animation-delay: 3000ms; }
+
+        .shooting_star:nth-child(1)::before, .shooting_star:nth-child(1)::after { animation-delay: 1000ms; }
+        .shooting_star:nth-child(2)::before, .shooting_star:nth-child(2)::after { animation-delay: 2000ms; }
+        .shooting_star:nth-child(3)::before, .shooting_star:nth-child(3)::after { animation-delay: 500ms; }
+        .shooting_star:nth-child(4)::before, .shooting_star:nth-child(4)::after { animation-delay: 3500ms; }
+        .shooting_star:nth-child(5)::before, .shooting_star:nth-child(5)::after { animation-delay: 1500ms; }
+        .shooting_star:nth-child(6)::before, .shooting_star:nth-child(6)::after { animation-delay: 2500ms; }
+        .shooting_star:nth-child(7)::before, .shooting_star:nth-child(7)::after { animation-delay: 800ms; }
+        .shooting_star:nth-child(8)::before, .shooting_star:nth-child(8)::after { animation-delay: 4000ms; }
+        .shooting_star:nth-child(9)::before, .shooting_star:nth-child(9)::after { animation-delay: 1200ms; }
+        .shooting_star:nth-child(10)::before, .shooting_star:nth-child(10)::after { animation-delay: 3000ms; }
+
+        @keyframes tail {
+            0% { width: 0; }
+            30% { width: 100px; }
+            100% { width: 0; }
+        }
+
+        @keyframes shining {
+            0% { width: 0; }
+            50% { width: 30px; }
+            100% { width: 0; }
+        }
+
+        @keyframes shooting {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(300px); }
+        }
+
+        /* --- 3. THE WAVES --- */
+        .ocean {
+            height: 5%;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: #015871;
+            z-index: -1;
+        }
+
+        .wave {
+            background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x;
+            position: absolute;
+            top: -198px;
+            width: 6400px;
+            height: 198px;
+            animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .wave:nth-of-type(2) {
+            top: -175px;
+            animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.125s infinite, swell 7s ease -1.25s infinite;
+            opacity: 1;
+        }
+
+        @keyframes wave {
+            0% { margin-left: 0; }
+            100% { margin-left: -1600px; }
+        }
+
+        @keyframes swell {
+            0%, 100% { transform: translate3d(0, -25px, 0); }
+            50% { transform: translate3d(0, 5px, 0); }
+        }
+
+        /* --- 4. MAIN CONTAINER --- */
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            text-align: center;
+        }
+
+        h1 .snap {
+            background: linear-gradient(135deg, #00f2ff, #00b8d4, #0096c7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1 .style {
+            color: #ffffff;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary:hover { box-shadow: 0 0 25px rgba(0, 242, 255, 0.5); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #aaa;
+            text-align: center;
+        }
+
+        .source-link {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.75rem;
+            margin-top: 10px;
+            display: inline-block;
+            transition: color 0.3s;
+        }
+        
+        .source-link:hover { 
+            color: var(--accent-cyan); 
+        }
+
+        /* --- 5. TROLL MODAL --- */
+        #trollModal {
+            display: none;
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        #trollModal img {
+            max-width: 80%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        #trollModal h2 { 
+            color: var(--accent-cyan); 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <div class="night">
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+    </div>
+
+    <div class="ocean">
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <div class="container">
+        <h1><span class="snap">Snap</span><span class="style">Style</span></h1>
+        <p class="subtitle">Snap. Style. Done.</p>
+
+        <a href="https://drive.google.com/file/d/1wKChuzUIIWMJWKprJTvbF0N97H2DAJGv/view?usp=sharing" class="btn btn-primary" target="_blank">
+            Download .APK (Android)
+        </a>
+
+        <div class="footer">
+            Built by Zyad H. <br>
+            <a href="#" class="source-link" onclick="triggerTroll(event)">[ View Source Code ]</a>
+        </div>
+    </div>
+
+    <div id="trollModal" onclick="closeTroll()">
+        <img src="https://media1.tenor.com/m/x8v1oNUOmg4AAAAd/rickroll-roll.gif" alt="Troll">
+        <h2>Nice try.</h2>
+        <p>Build your own app :)</p>
+        <p style="font-size: 0.8rem; color: #666;">(Click anywhere to close)</p>
+    </div>
+
+    <script>
+        function triggerTroll(e) {
+            e.preventDefault();
+            document.getElementById('trollModal').style.display = 'flex';
+        }
+
+        function closeTroll() {
+            document.getElementById('trollModal').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
